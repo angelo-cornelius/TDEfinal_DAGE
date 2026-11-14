@@ -16,14 +16,14 @@ const String MQTT_USUARIO = "dage";
 const String MQTT_SENHA   = "SENHA_DO_BROKER";
 IPAddress BROKER_IP(192, 168, 0, 100);   // IP do notebook, com virgulas no lugar dos pontos
 
-// LEDs e buzzer ja vem ligados na placa
-const int PINO_DHT     = 32;
-const int PINO_AGUA    = 4;
+// sensores e buzzer ligados nos conectores P04, P32 e P26; os LEDs ja vem na placa
+const int PINO_DHT     = 4;    // DHT22 (OUT)
+const int PINO_AGUA    = 32;   // DS18B20 (fio amarelo)
 const int LED_VERDE    = 17;
 const int LED_AMARELO  = 16;
 const int LED_VERMELHO = 13;
 const int LED_AZUL     = 12;
-const int BUZZER       = 25;
+const int BUZZER       = 26;   // buzzer (+)
 
 DHT dht(PINO_DHT, DHT22);
 OneWire fio(PINO_AGUA);
