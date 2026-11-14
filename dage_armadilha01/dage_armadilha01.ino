@@ -74,7 +74,7 @@ void setup() {
   aguaLetal = memoria.getFloat("agua_letal", aguaLetal);
 
   // tenta o Wi-Fi por ate 10 s; se nao conseguir, segue sem rede
-  // e a placa continua medindo e sinalizando (RNF03)
+  // e a placa continua medindo e sinalizando
   WiFi.begin(WIFI_NOME, WIFI_SENHA);
   for (int i = 0; i < 20 && WiFi.status() != WL_CONNECTED; i++) {
     delay(500);
@@ -281,7 +281,7 @@ void enviar(String topico, String valor, bool reter) {
 }
 
 
-// devolve pro painel o estado e os limites em uso (secao 11.2)
+// devolve pro painel o estado e os limites em uso
 // se um comando for recusado, o painel recebe de volta o valor antigo
 void enviarConfig() {
   enviar("dage/armadilha/01/config/monitoramento", monitorando ? "1" : "0", true);
