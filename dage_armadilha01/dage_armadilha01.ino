@@ -104,7 +104,6 @@ void loop() {
     ultimaTentativa = millis();
     conectarMQTT();
   }
-  mqtt.poll();   // verifica se chegou comando
 
   if (monitorando) {
     lerSensores();
@@ -121,7 +120,7 @@ void loop() {
 
   // espera 3 s ate o proximo ciclo, mas continua ouvindo os comandos do painel
   for (int i = 0; i < 30; i++) {
-    mqtt.poll();
+    mqtt.poll();   // verifica se chegou comando
     delay(100);
   }
 }
