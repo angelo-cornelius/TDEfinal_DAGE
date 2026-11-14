@@ -39,6 +39,8 @@ bool monitorando = true;
 float arMin = 26;
 float arMax = 30;
 float umidAlta = 70;
+float aguaMin = 22;
+float aguaMax = 34;
 float aguaLetal = 45;
 
 float tempAr;
@@ -71,6 +73,8 @@ void setup() {
   arMin = memoria.getFloat("ar_min", arMin);
   arMax = memoria.getFloat("ar_max", arMax);
   umidAlta = memoria.getFloat("umid_alta", umidAlta);
+  aguaMin = memoria.getFloat("agua_min", aguaMin);
+  aguaMax = memoria.getFloat("agua_max", aguaMax);
   aguaLetal = memoria.getFloat("agua_letal", aguaLetal);
 
   // tenta o Wi-Fi por ate 10 s; se nao conseguir, segue sem rede
@@ -160,7 +164,7 @@ void calcularRisco() {
     if (umidade > umidAlta) indice += 2;
     else if (umidade > 60) indice += 1;
 
-    if (tempAgua >= 22 && tempAgua <= 34) indice += 3;
+    if (tempAgua >= aguaMin && tempAgua <= aguaMax) indice += 3;
     else if (tempAgua >= 15 && tempAgua <= 36) indice += 1;
 
     if (indice <= 2) nivel = "BAIXO";
@@ -290,6 +294,8 @@ void enviarConfig() {
   enviar("dage/armadilha/01/config/ar_min", String(arMin, 1), true);
   enviar("dage/armadilha/01/config/ar_max", String(arMax, 1), true);
   enviar("dage/armadilha/01/config/umid_alta", String(umidAlta, 1), true);
+  enviar("dage/armadilha/01/config/agua_min", String(aguaMin, 1), true);
+  enviar("dage/armadilha/01/config/agua_max", String(aguaMax, 1), true);
   enviar("dage/armadilha/01/config/agua_letal", String(aguaLetal, 1), true);
 }
 
@@ -318,6 +324,8 @@ void receberComando(int tamanho) {
   if (t == "dage/armadilha/01/cmd/ar_min" && valor >= 15 && valor < arMax) arMin = valor;
   if (t == "dage/armadilha/01/cmd/ar_max" && valor > arMin && valor <= 40) arMax = valor;
   if (t == "dage/armadilha/01/cmd/umid_alta" && valor > 60 && valor <= 100) umidAlta = valor;
+  if (t == "dage/armadilha/01/cmd/agua_min" && valor >= 15 && valor < aguaMax) aguaMin = valor;
+  if (t == "dage/armadilha/01/cmd/agua_max" && valor > aguaMin && valor <= 36) aguaMax = valor;
   if (t == "dage/armadilha/01/cmd/agua_letal" && valor > 36 && valor <= 60) aguaLetal = valor;
 
   salvarConfig();
@@ -331,5 +339,7 @@ void salvarConfig() {
   memoria.putFloat("ar_min", arMin);
   memoria.putFloat("ar_max", arMax);
   memoria.putFloat("umid_alta", umidAlta);
+  memoria.putFloat("agua_min", aguaMin);
+  memoria.putFloat("agua_max", aguaMax);
   memoria.putFloat("agua_letal", aguaLetal);
 }
