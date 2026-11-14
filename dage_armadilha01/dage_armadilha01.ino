@@ -1,0 +1,240 @@
+// Projeto DAGE - Armadilha 01
+// Monitoramento de focos do Aedes aegypti - ES32Lab (ESP32)
+
+#include <WiFi.h>
+#include <ArduinoMqttClient.h>
+#include <DHT.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <ES32Lab.h>
+
+// rede do celular e IP do notebook
+const String WIFI_NOME    = "NOME_DO_HOTSPOT";
+const String WIFI_SENHA   = "SENHA_DO_HOTSPOT";
+const String MQTT_USUARIO = "dage";
+const String MQTT_SENHA   = "SENHA_DO_BROKER";
+IPAddress BROKER_IP(192, 168, 0, 100);   // IP do notebook, com virgulas no lugar dos pontos
+
+// LEDs e buzzer ja vem ligados na placa
+const int PINO_DHT     = 32;
+const int PINO_AGUA    = 4;
+const int LED_VERDE    = 17;
+const int LED_AMARELO  = 16;
+const int LED_VERMELHO = 13;
+const int LED_AZUL     = 12;
+const int BUZZER       = 25;
+
+DHT dht(PINO_DHT, DHT22);
+OneWire fio(PINO_AGUA);
+DallasTemperature sensorAgua(&fio);
+WiFiClient cliente;
+MqttClient mqtt(cliente);
+ES_TFT tela;
+
+bool monitorando = true;
+
+// limites (podem ser mudados pelo painel)
+float arMin = 26;
+float arMax = 30;
+float umidAlta = 70;
+float aguaLetal = 45;
+
+float tempAr;
+float umidade;
+float tempAgua;
+int indice;
+String nivel;
+String nivelAnterior = "";   // pro buzzer nao bipar toda hora
+
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(LED_AMARELO, OUTPUT);
+  pinMode(LED_VERMELHO, OUTPUT);
+  pinMode(LED_AZUL, OUTPUT);
+
+  tela.begin();
+  tela.setRotation(3);   // tela deitada
+  tela.setTextSize(2);
+
+  dht.begin();
+  sensorAgua.begin();
+
+  // espera conectar no Wi-Fi
+  WiFi.begin(WIFI_NOME, WIFI_SENHA);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Wi-Fi conectado");
+
+  mqtt.setId("armadilha01");
+  mqtt.setUsernamePassword(MQTT_USUARIO, MQTT_SENHA);
+  mqtt.setKeepAliveInterval(10000);   // broker percebe a queda em ~15 s
+  mqtt.onMessage(receberComando);     // funcao chamada quando chega comando
+
+  // se a placa cair, o broker publica "desconectada" no status
+  mqtt.beginWill("dage/armadilha/01/status", true, 1);
+  mqtt.print("desconectada");
+  mqtt.endWill();
+}
+
+
+void loop() {
+  if (!mqtt.connected()) {
+    conectarMQTT();
+  }
+  mqtt.poll();   // verifica se chegou comando
+
+  if (monitorando) {
+    lerSensores();
+    calcularRisco();
+    atualizarLeds();
+    mostrarNaTela();
+    enviarDados();
+  } else {
+    // pausado pelo painel
+    apagarLeds();
+    tela.fillScreen(TFT_BLACK);
+    tela.setCursor(0, 50);
+    tela.println("PAUSADO");
+    enviar("dage/armadilha/01/nivel", "PAUSADO");
+  }
+
+  delay(1000);
+}
+
+
+void lerSensores() {
+  tempAr = dht.readTemperature();
+  umidade = dht.readHumidity();
+  sensorAgua.requestTemperatures();
+  tempAgua = sensorAgua.getTempCByIndex(0);
+
+  Serial.print(tempAr);
+  Serial.print(" C  ");
+  Serial.print(umidade);
+  Serial.print(" %  ");
+  Serial.print(tempAgua);
+  Serial.println(" C");
+}
+
+
+void calcularRisco() {
+  indice = 0;
+
+  // se o sensor falhar ele manda um valor fora dessas faixas (ex: -127)
+  bool sensorOk = tempAr > -40 && tempAr < 80 && umidade >= 0 && umidade <= 100 && tempAgua > -100 && tempAgua < 85;
+
+  if (!sensorOk) {
+    nivel = "ERRO";
+  } else if (tempAgua > aguaLetal) {
+    nivel = "LETAL";   // agua muito quente mata as larvas
+  } else {
+    // soma os pontos (maximo 7)
+    if (tempAr >= arMin && tempAr <= arMax) indice += 2;
+    else if (tempAr >= 18 && tempAr <= 34) indice += 1;
+
+    if (umidade > umidAlta) indice += 2;
+    else if (umidade > 60) indice += 1;
+
+    if (tempAgua >= 22 && tempAgua <= 34) indice += 3;
+    else if (tempAgua >= 15 && tempAgua <= 36) indice += 1;
+
+    if (indice <= 2) nivel = "BAIXO";
+    else if (indice <= 5) nivel = "MEDIO";
+    else nivel = "ALTO";
+  }
+}
+
+
+void apagarLeds() {
+  digitalWrite(LED_VERDE, LOW);
+  digitalWrite(LED_AMARELO, LOW);
+  digitalWrite(LED_VERMELHO, LOW);
+  digitalWrite(LED_AZUL, LOW);
+}
+
+
+void atualizarLeds() {
+  apagarLeds();
+  if (nivel == "BAIXO") digitalWrite(LED_VERDE, HIGH);
+  if (nivel == "MEDIO") digitalWrite(LED_AMARELO, HIGH);
+  if (nivel == "ALTO" || nivel == "LETAL") digitalWrite(LED_VERMELHO, HIGH);
+  if (nivel == "ERRO") digitalWrite(LED_AZUL, HIGH);
+
+  // bipa so quando o risco muda pra alto
+  if (nivel == "ALTO" && nivelAnterior != "ALTO") {
+    tone(BUZZER, 2000, 300);
+  }
+  nivelAnterior = nivel;
+}
+
+
+void mostrarNaTela() {
+  tela.fillScreen(TFT_BLACK);
+  tela.setCursor(0, 0);
+  tela.println("Armadilha 01");
+  tela.print("Ar: ");
+  tela.println(tempAr, 1);   // 1 casa decimal
+  tela.print("Umid: ");
+  tela.println(umidade, 0);
+  tela.print("Agua: ");
+  tela.println(tempAgua, 1);
+  tela.print("Indice: ");
+  tela.println(indice);
+  tela.println(nivel);
+}
+
+
+void conectarMQTT() {
+  if (mqtt.connect(BROKER_IP, 1883)) {
+    // o true no beginMessage pede pro broker guardar a mensagem
+    mqtt.beginMessage("dage/armadilha/01/status", true);
+    mqtt.print("conectada");
+    mqtt.endMessage();
+
+    mqtt.subscribe("dage/armadilha/01/cmd/#");   // # = todos os comandos
+    Serial.println("MQTT conectado");
+  } else {
+    Serial.print("Erro MQTT: ");
+    Serial.println(mqtt.connectError());
+  }
+}
+
+
+void enviar(String topico, String valor) {
+  mqtt.beginMessage(topico);
+  mqtt.print(valor);
+  mqtt.endMessage();
+}
+
+
+void enviarDados() {
+  if (nivel != "ERRO") {
+    enviar("dage/armadilha/01/ar", String(tempAr, 1));
+    enviar("dage/armadilha/01/umidade", String(umidade, 1));
+    enviar("dage/armadilha/01/agua", String(tempAgua, 1));
+  }
+  enviar("dage/armadilha/01/indice", String(indice));
+  enviar("dage/armadilha/01/nivel", nivel);
+}
+
+
+void receberComando(int tamanho) {
+  String t = mqtt.messageTopic();
+  String texto = mqtt.readString();
+  float valor = texto.toFloat();
+
+  Serial.println(t + " = " + texto);
+
+  // so aceita valores que fazem sentido
+  if (t == "dage/armadilha/01/cmd/monitoramento" && texto == "1") monitorando = true;
+  if (t == "dage/armadilha/01/cmd/monitoramento" && texto == "0") monitorando = false;
+  if (t == "dage/armadilha/01/cmd/ar_min" && valor >= 15 && valor < arMax) arMin = valor;
+  if (t == "dage/armadilha/01/cmd/ar_max" && valor > arMin && valor <= 40) arMax = valor;
+  if (t == "dage/armadilha/01/cmd/umid_alta" && valor > 60 && valor <= 100) umidAlta = valor;
+  if (t == "dage/armadilha/01/cmd/agua_letal" && valor > 36 && valor <= 60) aguaLetal = valor;
+}
