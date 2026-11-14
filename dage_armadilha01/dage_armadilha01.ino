@@ -117,7 +117,8 @@ void loop() {
     apagarLeds();
     tela.fillScreen(TFT_BLACK);
     tela.setCursor(0, 50);
-    tela.println("PAUSADO");
+    tela.println("Monitoramento");
+    tela.println("pausado");
     enviar("dage/armadilha/01/nivel", "PAUSADO");
   }
 
@@ -207,7 +208,9 @@ void mostrarNaTela() {
   tela.println(tempAgua, 1);
   tela.print("Indice: ");
   tela.println(indice);
-  tela.println(nivel);
+  if (nivel == "LETAL") tela.println("Agua em temperatura letal");
+  else if (nivel == "ERRO") tela.println("Erro no sensor");
+  else tela.println("Risco " + nivel);
 }
 
 
