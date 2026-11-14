@@ -59,8 +59,8 @@ void setup() {
   pinMode(LED_AZUL, OUTPUT);
 
   tela.begin();
-  tela.setRotation(3);   // tela deitada
-  tela.setTextSize(2);
+  tela.setRotation(3);   // tela deitada (160 x 128)
+  tela.setTextSize(1);
 
   dht.begin();
   sensorAgua.begin();
@@ -115,10 +115,7 @@ void loop() {
   } else {
     // pausado pelo painel
     apagarLeds();
-    tela.fillScreen(TFT_BLACK);
-    tela.setCursor(0, 50);
-    tela.println("Monitoramento");
-    tela.println("pausado");
+    mostrarPausado();
     enviar("dage/armadilha/01/nivel", "PAUSADO");
   }
 
@@ -198,19 +195,57 @@ void atualizarLeds() {
 
 void mostrarNaTela() {
   tela.fillScreen(TFT_BLACK);
-  tela.setCursor(0, 0);
-  tela.println("Armadilha 01");
-  tela.print("Ar: ");
-  tela.println(tempAr, 1);   // 1 casa decimal
-  tela.print("Umid: ");
-  tela.println(umidade, 0);
-  tela.print("Agua: ");
-  tela.println(tempAgua, 1);
-  tela.print("Indice: ");
-  tela.println(indice);
-  if (nivel == "LETAL") tela.println("Agua em temperatura letal");
-  else if (nivel == "ERRO") tela.println("Erro no sensor");
-  else tela.println("Risco " + nivel);
+  desenharCabecalho();
+
+  // um cartao pra cada leitura (1 casa decimal)
+  desenharCartao(3, "Ar", String(tempAr, 1), "graus C");
+  desenharCartao(55, "Umidade", String(umidade, 0), "%");
+  desenharCartao(107, "Agua", String(tempAgua, 1), "graus C");
+
+  // caixa colorida com o nivel de risco
+  String txtIndice = "Risco - indice " + String(indice) + "/7";
+  if (nivel == "BAIXO") desenharCaixa(72, txtIndice, "BAIXO", TFT_DARKGREEN, TFT_WHITE);
+  if (nivel == "MEDIO") desenharCaixa(72, txtIndice, "MEDIO", TFT_YELLOW, TFT_BLACK);
+  if (nivel == "ALTO") desenharCaixa(72, txtIndice, "ALTO", TFT_RED, TFT_WHITE);
+  if (nivel == "LETAL") desenharCaixa(72, "Agua em temperatura", "LETAL", TFT_PURPLE, TFT_WHITE);
+  if (nivel == "ERRO") desenharCaixa(72, "Falha no sensor", "ERRO", TFT_BLUE, TFT_WHITE);
+}
+
+
+void mostrarPausado() {
+  tela.fillScreen(TFT_BLACK);
+  desenharCabecalho();
+  desenharCaixa(46, "Monitoramento", "PAUSADO", TFT_DARKGREY, TFT_WHITE);
+}
+
+
+// faixa de cima com o nome e uma bolinha: verde = conectado, vermelha = sem conexao
+void desenharCabecalho() {
+  tela.fillRect(0, 0, 160, 18, TFT_NAVY);
+  tela.setTextColor(TFT_WHITE);
+  tela.drawString("Armadilha 01", 4, 1, 2);   // o ultimo numero e a fonte
+  if (mqtt.connected()) tela.fillCircle(150, 9, 4, TFT_GREEN);
+  else tela.fillCircle(150, 9, 4, TFT_RED);
+}
+
+
+// quadrado com borda: nome em cima, valor no meio e unidade embaixo
+void desenharCartao(int x, String titulo, String valor, String unidade) {
+  tela.drawRoundRect(x, 22, 50, 44, 4, TFT_DARKGREY);
+  tela.setTextColor(TFT_LIGHTGREY);
+  tela.drawCentreString(titulo, x + 25, 26, 1);
+  tela.drawCentreString(unidade, x + 25, 55, 1);
+  tela.setTextColor(TFT_WHITE);
+  tela.drawCentreString(valor, x + 25, 37, 2);
+}
+
+
+// caixa colorida: texto pequeno em cima e texto grande embaixo
+void desenharCaixa(int y, String linha1, String linha2, uint16_t cor, uint16_t corTexto) {
+  tela.fillRoundRect(3, y, 154, 52, 6, cor);
+  tela.setTextColor(corTexto);
+  tela.drawCentreString(linha1, 80, y + 4, 2);
+  tela.drawCentreString(linha2, 80, y + 22, 4);
 }
 
 
