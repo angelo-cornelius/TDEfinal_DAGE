@@ -72,13 +72,15 @@ void setup() {
   umidAlta = memoria.getFloat("umid_alta", umidAlta);
   aguaLetal = memoria.getFloat("agua_letal", aguaLetal);
 
-  // espera conectar no Wi-Fi
+  // tenta o Wi-Fi por ate 10 s; se nao conseguir, segue sem rede
+  // e a placa continua medindo e sinalizando (RNF03)
   WiFi.begin(WIFI_NOME, WIFI_SENHA);
-  while (WiFi.status() != WL_CONNECTED) {
+  for (int i = 0; i < 20 && WiFi.status() != WL_CONNECTED; i++) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("Wi-Fi conectado");
+  if (WiFi.status() == WL_CONNECTED) Serial.println("Wi-Fi conectado");
+  else Serial.println("Sem Wi-Fi, seguindo sem rede");
 
   mqtt.setId("armadilha01");
   mqtt.setUsernamePassword(MQTT_USUARIO, MQTT_SENHA);
@@ -204,6 +206,12 @@ void mostrarNaTela() {
 
 
 void conectarMQTT() {
+  // sem Wi-Fi nao adianta tentar o broker
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Sem Wi-Fi");
+    return;
+  }
+
   if (mqtt.connect(BROKER_IP, 1883)) {
     // o true no beginMessage pede pro broker guardar a mensagem
     mqtt.beginMessage("dage/armadilha/01/status", true);
@@ -220,6 +228,7 @@ void conectarMQTT() {
 
 
 void enviar(String topico, String valor) {
+  if (!mqtt.connected()) return;   // sem conexao so nao envia
   mqtt.beginMessage(topico);
   mqtt.print(valor);
   mqtt.endMessage();
