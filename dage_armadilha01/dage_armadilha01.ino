@@ -7,6 +7,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <ES32Lab.h>
+#include <Preferences.h>
 
 // rede do celular e IP do notebook
 const String WIFI_NOME    = "NOME_DO_HOTSPOT";
@@ -30,6 +31,7 @@ DallasTemperature sensorAgua(&fio);
 WiFiClient cliente;
 MqttClient mqtt(cliente);
 ES_TFT tela;
+Preferences memoria;   // guarda a configuracao na flash
 
 bool monitorando = true;
 
@@ -61,6 +63,14 @@ void setup() {
 
   dht.begin();
   sensorAgua.begin();
+
+  // carrega o que foi salvo antes de reiniciar (se nao tiver nada, fica o valor padrao)
+  memoria.begin("dage", false);
+  monitorando = memoria.getBool("monitorando", monitorando);
+  arMin = memoria.getFloat("ar_min", arMin);
+  arMax = memoria.getFloat("ar_max", arMax);
+  umidAlta = memoria.getFloat("umid_alta", umidAlta);
+  aguaLetal = memoria.getFloat("agua_letal", aguaLetal);
 
   // espera conectar no Wi-Fi
   WiFi.begin(WIFI_NOME, WIFI_SENHA);
@@ -241,4 +251,16 @@ void receberComando(int tamanho) {
   if (t == "dage/armadilha/01/cmd/ar_max" && valor > arMin && valor <= 40) arMax = valor;
   if (t == "dage/armadilha/01/cmd/umid_alta" && valor > 60 && valor <= 100) umidAlta = valor;
   if (t == "dage/armadilha/01/cmd/agua_letal" && valor > 36 && valor <= 60) aguaLetal = valor;
+
+  salvarConfig();
+}
+
+
+// salva o estado e os limites pra voltarem depois de reiniciar
+void salvarConfig() {
+  memoria.putBool("monitorando", monitorando);
+  memoria.putFloat("ar_min", arMin);
+  memoria.putFloat("ar_max", arMax);
+  memoria.putFloat("umid_alta", umidAlta);
+  memoria.putFloat("agua_letal", aguaLetal);
 }
