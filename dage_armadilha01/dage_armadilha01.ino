@@ -115,7 +115,7 @@ void loop() {
     // pausado pelo painel
     apagarLeds();
     mostrarPausado();
-    enviar("dage/armadilha/01/nivel", "PAUSADO");
+    enviar("dage/armadilha/01/nivel", "PAUSADO", false);
   }
 
   // espera 3 s ate o proximo ciclo, mas continua ouvindo os comandos do painel
@@ -272,18 +272,10 @@ void conectarMQTT() {
 }
 
 
-void enviar(String topico, String valor) {
+// reter = true pede pro broker guardar a ultima mensagem
+void enviar(String topico, String valor, bool reter) {
   if (!mqtt.connected()) return;   // sem conexao so nao envia
-  mqtt.beginMessage(topico);
-  mqtt.print(valor);
-  mqtt.endMessage();
-}
-
-
-// igual ao enviar, mas o broker guarda a ultima mensagem
-void enviarRetido(String topico, String valor) {
-  if (!mqtt.connected()) return;
-  mqtt.beginMessage(topico, true);
+  mqtt.beginMessage(topico, reter);
   mqtt.print(valor);
   mqtt.endMessage();
 }
@@ -292,22 +284,22 @@ void enviarRetido(String topico, String valor) {
 // devolve pro painel o estado e os limites em uso (secao 11.2)
 // se um comando for recusado, o painel recebe de volta o valor antigo
 void enviarConfig() {
-  enviarRetido("dage/armadilha/01/config/monitoramento", monitorando ? "1" : "0");
-  enviarRetido("dage/armadilha/01/config/ar_min", String(arMin, 1));
-  enviarRetido("dage/armadilha/01/config/ar_max", String(arMax, 1));
-  enviarRetido("dage/armadilha/01/config/umid_alta", String(umidAlta, 1));
-  enviarRetido("dage/armadilha/01/config/agua_letal", String(aguaLetal, 1));
+  enviar("dage/armadilha/01/config/monitoramento", monitorando ? "1" : "0", true);
+  enviar("dage/armadilha/01/config/ar_min", String(arMin, 1), true);
+  enviar("dage/armadilha/01/config/ar_max", String(arMax, 1), true);
+  enviar("dage/armadilha/01/config/umid_alta", String(umidAlta, 1), true);
+  enviar("dage/armadilha/01/config/agua_letal", String(aguaLetal, 1), true);
 }
 
 
 void enviarDados() {
   if (nivel != "ERRO") {
-    enviar("dage/armadilha/01/ar", String(tempAr, 1));
-    enviar("dage/armadilha/01/umidade", String(umidade, 1));
-    enviar("dage/armadilha/01/agua", String(tempAgua, 1));
+    enviar("dage/armadilha/01/ar", String(tempAr, 1), false);
+    enviar("dage/armadilha/01/umidade", String(umidade, 1), false);
+    enviar("dage/armadilha/01/agua", String(tempAgua, 1), false);
   }
-  enviar("dage/armadilha/01/indice", String(indice));
-  enviar("dage/armadilha/01/nivel", nivel);
+  enviar("dage/armadilha/01/indice", String(indice), false);
+  enviar("dage/armadilha/01/nivel", nivel, false);
 }
 
 
