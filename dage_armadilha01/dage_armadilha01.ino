@@ -321,8 +321,8 @@ void receberComando(int tamanho) {
   // so aceita valores que fazem sentido
   if (t == "dage/armadilha/01/cmd/monitoramento" && texto == "1") monitorando = true;
   if (t == "dage/armadilha/01/cmd/monitoramento" && texto == "0") monitorando = false;
-  if (t == "dage/armadilha/01/cmd/ar_min" && valor >= 15 && valor < arMax) arMin = valor;
-  if (t == "dage/armadilha/01/cmd/ar_max" && valor > arMin && valor <= 40) arMax = valor;
+  if (t == "dage/armadilha/01/cmd/ar_min" && valor >= 18 && valor < arMax) arMin = valor;
+  if (t == "dage/armadilha/01/cmd/ar_max" && valor > arMin && valor <= 34) arMax = valor;
   if (t == "dage/armadilha/01/cmd/umid_alta" && valor > 60 && valor <= 100) umidAlta = valor;
   if (t == "dage/armadilha/01/cmd/agua_min" && valor >= 15 && valor < aguaMax) aguaMin = valor;
   if (t == "dage/armadilha/01/cmd/agua_max" && valor > aguaMin && valor <= 36) aguaMax = valor;
