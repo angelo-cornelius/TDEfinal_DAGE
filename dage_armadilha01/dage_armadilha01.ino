@@ -241,7 +241,7 @@ void desenharCartao(int x, String titulo, String valor, String unidade) {
 
 
 // caixa colorida: texto pequeno em cima e texto grande embaixo
-void desenharCaixa(int y, String linha1, String linha2, uint16_t cor, uint16_t corTexto) {
+void desenharCaixa(int y, String linha1, String linha2, int cor, int corTexto) {
   tela.fillRoundRect(3, y, 154, 52, 6, cor);
   tela.setTextColor(corTexto);
   tela.drawCentreString(linha1, 80, y + 4, 2);
