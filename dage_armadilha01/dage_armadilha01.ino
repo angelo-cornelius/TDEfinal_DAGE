@@ -47,6 +47,7 @@ float tempAgua;
 int indice;
 String nivel;
 String nivelAnterior = "";   // pro buzzer nao bipar toda hora
+unsigned long ultimaTentativa = 0;   // ultima vez que tentou reconectar
 
 
 void setup() {
@@ -91,11 +92,16 @@ void setup() {
   mqtt.beginWill("dage/armadilha/01/status", true, 1);
   mqtt.print("desconectada");
   mqtt.endWill();
+
+  conectarMQTT();   // primeira tentativa, se falhar o loop tenta de novo
 }
 
 
 void loop() {
-  if (!mqtt.connected()) {
+  // tenta reconectar so a cada 10 s, pra nao atrasar o ciclo
+  // quando o Wi-Fi ou o broker estiverem fora
+  if (!mqtt.connected() && millis() - ultimaTentativa > 10000) {
+    ultimaTentativa = millis();
     conectarMQTT();
   }
   mqtt.poll();   // verifica se chegou comando
@@ -208,7 +214,8 @@ void mostrarNaTela() {
 void conectarMQTT() {
   // sem Wi-Fi nao adianta tentar o broker
   if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("Sem Wi-Fi");
+    Serial.println("Sem Wi-Fi, tentando reconectar");
+    WiFi.reconnect();
     return;
   }
 
