@@ -47,7 +47,7 @@ float tempAgua;
 int indice;
 String nivel;
 String nivelAnterior = "";   // pro buzzer nao bipar toda hora
-unsigned long ultimaTentativa = 0;   // ultima vez que tentou reconectar
+int ciclos = 0;   // conta os ciclos pra saber quando tentar reconectar
 
 
 void setup() {
@@ -98,10 +98,11 @@ void setup() {
 
 
 void loop() {
-  // tenta reconectar so a cada 10 s, pra nao atrasar o ciclo
+  // tenta reconectar so a cada 3 ciclos (~10 s), pra nao atrasar as leituras
   // quando o Wi-Fi ou o broker estiverem fora
-  if (!mqtt.connected() && millis() - ultimaTentativa > 10000) {
-    ultimaTentativa = millis();
+  ciclos++;
+  if (!mqtt.connected() && ciclos >= 3) {
+    ciclos = 0;
     conectarMQTT();
   }
 
