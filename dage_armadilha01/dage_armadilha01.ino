@@ -284,7 +284,8 @@ void enviar(String topico, String valor, bool reter) {
 // devolve pro painel o estado e os limites em uso
 // se um comando for recusado, o painel recebe de volta o valor antigo
 void enviarConfig() {
-  enviar("dage/armadilha/01/config/monitoramento", monitorando ? "1" : "0", true);
+  if (monitorando) enviar("dage/armadilha/01/config/monitoramento", "1", true);
+  else enviar("dage/armadilha/01/config/monitoramento", "0", true);
   enviar("dage/armadilha/01/config/ar_min", String(arMin, 1), true);
   enviar("dage/armadilha/01/config/ar_max", String(arMax, 1), true);
   enviar("dage/armadilha/01/config/umid_alta", String(umidAlta, 1), true);
