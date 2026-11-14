@@ -9,12 +9,7 @@
 #include <ES32Lab.h>
 #include <Preferences.h>
 
-// rede do celular e IP do notebook
-const String WIFI_NOME    = "NOME_DO_HOTSPOT";
-const String WIFI_SENHA   = "SENHA_DO_HOTSPOT";
-const String MQTT_USUARIO = "dage";
-const String MQTT_SENHA   = "SENHA_DO_BROKER";
-IPAddress BROKER_IP(192, 168, 0, 100);   // IP do notebook, com virgulas no lugar dos pontos
+#include "secrets.h"   // senhas do Wi-Fi e do broker (fora do Git)
 
 // sensores e buzzer ligados nos conectores P04, P32 e P26; os LEDs ja vem na placa
 const int PINO_DHT     = 4;    // DHT22 (OUT)
