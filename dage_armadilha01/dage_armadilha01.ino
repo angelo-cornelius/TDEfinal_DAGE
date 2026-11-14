@@ -227,6 +227,7 @@ void conectarMQTT() {
 
     mqtt.subscribe("dage/armadilha/01/cmd/#");   // # = todos os comandos
     Serial.println("MQTT conectado");
+    enviarConfig();
   } else {
     Serial.print("Erro MQTT: ");
     Serial.println(mqtt.connectError());
@@ -239,6 +240,26 @@ void enviar(String topico, String valor) {
   mqtt.beginMessage(topico);
   mqtt.print(valor);
   mqtt.endMessage();
+}
+
+
+// igual ao enviar, mas o broker guarda a ultima mensagem
+void enviarRetido(String topico, String valor) {
+  if (!mqtt.connected()) return;
+  mqtt.beginMessage(topico, true);
+  mqtt.print(valor);
+  mqtt.endMessage();
+}
+
+
+// devolve pro painel o estado e os limites em uso (secao 11.2)
+// se um comando for recusado, o painel recebe de volta o valor antigo
+void enviarConfig() {
+  enviarRetido("dage/armadilha/01/config/monitoramento", monitorando ? "1" : "0");
+  enviarRetido("dage/armadilha/01/config/ar_min", String(arMin, 1));
+  enviarRetido("dage/armadilha/01/config/ar_max", String(arMax, 1));
+  enviarRetido("dage/armadilha/01/config/umid_alta", String(umidAlta, 1));
+  enviarRetido("dage/armadilha/01/config/agua_letal", String(aguaLetal, 1));
 }
 
 
@@ -269,6 +290,7 @@ void receberComando(int tamanho) {
   if (t == "dage/armadilha/01/cmd/agua_letal" && valor > 36 && valor <= 60) aguaLetal = valor;
 
   salvarConfig();
+  enviarConfig();
 }
 
 
