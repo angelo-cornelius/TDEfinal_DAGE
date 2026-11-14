@@ -103,7 +103,11 @@ void loop() {
     enviar("dage/armadilha/01/nivel", "PAUSADO");
   }
 
-  delay(1000);
+  // espera 3 s ate o proximo ciclo, mas continua ouvindo os comandos do painel
+  for (int i = 0; i < 30; i++) {
+    mqtt.poll();
+    delay(100);
+  }
 }
 
 
