@@ -1,0 +1,1579 @@
+[
+    {
+        "id": "3a5d1d005de504f2",
+        "type": "tab",
+        "label": "Armadilha 01",
+        "disabled": false,
+        "info": "Painel da armadilha 01 (placa ES32Lab). A placa publica em dage/armadilha/01/... e recebe comandos em dage/armadilha/01/cmd/..."
+    },
+    {
+        "id": "e0899595ae582aaa",
+        "type": "tab",
+        "label": "Armadilha 02 (simulada)",
+        "disabled": false,
+        "info": "Armadilha 02 simulada no proprio Node-RED, so com leituras, pra testar o painel com mais de um ponto."
+    },
+    {
+        "id": "616f02b5f9c4a0e7",
+        "type": "mqtt-broker",
+        "name": "Mosquitto (notebook)",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "painel-dage",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "15",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": "",
+        "credentials": {
+            "user": "painel",
+            "password": ""
+        }
+    },
+    {
+        "id": "aac4c4b1323a81c6",
+        "type": "ui-base",
+        "name": "DAGE",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "5b65a796b3640214",
+        "type": "ui-theme",
+        "name": "Tema DAGE",
+        "colors": {
+            "surface": "#1d6b3f",
+            "primary": "#1d8a4e",
+            "bgPage": "#eef1f2",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d3dadc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "23f3c874d6c8ab3f",
+        "type": "ui-page",
+        "name": "Armadilha 01",
+        "ui": "aac4c4b1323a81c6",
+        "path": "/armadilha-01",
+        "icon": "thermometer",
+        "layout": "grid",
+        "theme": "5b65a796b3640214",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "53250e2642665181",
+        "type": "ui-group",
+        "name": "Leituras atuais",
+        "page": "23f3c874d6c8ab3f",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "8dc29b44656d5aed",
+        "type": "ui-group",
+        "name": "Estado",
+        "page": "23f3c874d6c8ab3f",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "2e8203449006fc11",
+        "type": "ui-group",
+        "name": "Histórico recente",
+        "page": "23f3c874d6c8ab3f",
+        "width": "12",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "23576446e9073392",
+        "type": "comment",
+        "z": "3a5d1d005de504f2",
+        "name": "Leituras que a armadilha 01 manda a cada 3 s",
+        "info": "",
+        "x": 190,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "3a7b25a411114254",
+        "type": "mqtt in",
+        "z": "3a5d1d005de504f2",
+        "name": "",
+        "topic": "dage/armadilha/01/+",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "616f02b5f9c4a0e7",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "720c0e0ac5032ffd"
+            ]
+        ]
+    },
+    {
+        "id": "720c0e0ac5032ffd",
+        "type": "switch",
+        "z": "3a5d1d005de504f2",
+        "name": "Separa por tópico",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/ar",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/umidade",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/agua",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/indice",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/nivel",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/status",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 6,
+        "x": 400,
+        "y": 180,
+        "wires": [
+            [
+                "9e66d55ce8bb1522",
+                "6aad660c9c07aaa4"
+            ],
+            [
+                "9207949f240a1a57",
+                "ce0289a408d44665"
+            ],
+            [
+                "4c5a22325fa25206",
+                "763ad7ea0ade2081"
+            ],
+            [
+                "89797b286238b630"
+            ],
+            [
+                "70711819f3bdcf6a"
+            ],
+            [
+                "f322848db83021f6"
+            ]
+        ]
+    },
+    {
+        "id": "9e66d55ce8bb1522",
+        "type": "ui-text",
+        "z": "3a5d1d005de504f2",
+        "group": "53250e2642665181",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temperatura do ar (°C)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "9207949f240a1a57",
+        "type": "ui-text",
+        "z": "3a5d1d005de504f2",
+        "group": "53250e2642665181",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Umidade do ar (%)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "4c5a22325fa25206",
+        "type": "ui-text",
+        "z": "3a5d1d005de504f2",
+        "group": "53250e2642665181",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temperatura da água (°C)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "89797b286238b630",
+        "type": "ui-text",
+        "z": "3a5d1d005de504f2",
+        "group": "53250e2642665181",
+        "order": 4,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Índice de risco (0 a 7)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "70711819f3bdcf6a",
+        "type": "function",
+        "z": "3a5d1d005de504f2",
+        "name": "Texto do nível",
+        "func": "// troca o nivel que a placa manda por um texto e uma cor (iguais aos da tela da placa)\nvar nivel = msg.payload;\n\nif (nivel == \"BAIXO\") { msg.payload = \"Risco baixo\"; msg.cor = \"green\"; }\nif (nivel == \"MEDIO\") { msg.payload = \"Risco médio\"; msg.cor = \"orange\"; }\nif (nivel == \"ALTO\") { msg.payload = \"Risco alto\"; msg.cor = \"red\"; }\nif (nivel == \"LETAL\") { msg.payload = \"Água em temperatura letal\"; msg.cor = \"purple\"; }\nif (nivel == \"ERRO\") { msg.payload = \"Falha no sensor\"; msg.cor = \"blue\"; }\nif (nivel == \"PAUSADO\") { msg.payload = \"Monitoramento pausado\"; msg.cor = \"gray\"; }\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 240,
+        "wires": [
+            [
+                "b7e55348f609c755"
+            ]
+        ]
+    },
+    {
+        "id": "b7e55348f609c755",
+        "type": "ui-template",
+        "z": "3a5d1d005de504f2",
+        "group": "53250e2642665181",
+        "page": "",
+        "ui": "",
+        "name": "Nível de risco",
+        "order": 5,
+        "width": "0",
+        "height": "1",
+        "head": "",
+        "format": "<template>\n  <!-- caixa colorida com o nivel de risco -->\n  <div :style=\"{ background: msg?.cor || 'gray', color: 'white', padding: '12px', borderRadius: '6px', textAlign: 'center', fontSize: '22px' }\">\n    {{ msg?.payload || 'Sem dados' }}\n  </div>\n</template>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 900,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f322848db83021f6",
+        "type": "ui-text",
+        "z": "3a5d1d005de504f2",
+        "group": "8dc29b44656d5aed",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Placa",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "6aad660c9c07aaa4",
+        "type": "change",
+        "z": "3a5d1d005de504f2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Ar",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 330,
+        "wires": [
+            [
+                "c6b8a0f25538ce99"
+            ]
+        ]
+    },
+    {
+        "id": "763ad7ea0ade2081",
+        "type": "change",
+        "z": "3a5d1d005de504f2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Água",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 370,
+        "wires": [
+            [
+                "c6b8a0f25538ce99"
+            ]
+        ]
+    },
+    {
+        "id": "c6b8a0f25538ce99",
+        "type": "ui-chart",
+        "z": "3a5d1d005de504f2",
+        "group": "2e8203449006fc11",
+        "name": "Temperaturas",
+        "label": "Temperaturas (°C)",
+        "order": 1,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "false",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": "10",
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "",
+        "colors": [
+            "#d62728",
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5",
+            "#8c564b"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "5",
+        "className": "",
+        "interpolation": "linear",
+        "x": 920,
+        "y": 350,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ce0289a408d44665",
+        "type": "ui-chart",
+        "z": "3a5d1d005de504f2",
+        "group": "2e8203449006fc11",
+        "name": "Umidade",
+        "label": "Umidade do ar (%)",
+        "order": 2,
+        "chartType": "line",
+        "category": "Umidade",
+        "categoryType": "str",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "0",
+        "ymax": "100",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "false",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": "10",
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5",
+            "#8c564b"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "4",
+        "className": "",
+        "interpolation": "linear",
+        "x": 920,
+        "y": 410,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f2d78b6ea17e9055",
+        "type": "ui-group",
+        "name": "Limites do cálculo de risco",
+        "page": "23f3c874d6c8ab3f",
+        "width": "12",
+        "height": "1",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "31df592674bdeec9",
+        "type": "comment",
+        "z": "3a5d1d005de504f2",
+        "name": "Comandos: a placa devolve o que esta em uso em config/... e isso atualiza os campos",
+        "info": "",
+        "x": 300,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "639dd3891f795a58",
+        "type": "mqtt in",
+        "z": "3a5d1d005de504f2",
+        "name": "",
+        "topic": "dage/armadilha/01/config/+",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "616f02b5f9c4a0e7",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 640,
+        "wires": [
+            [
+                "81075ddb712afc8c"
+            ]
+        ]
+    },
+    {
+        "id": "81075ddb712afc8c",
+        "type": "switch",
+        "z": "3a5d1d005de504f2",
+        "name": "Separa por tópico",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/monitoramento",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/ar_min",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/ar_max",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/umid_alta",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/agua_min",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/agua_max",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/01/config/agua_letal",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 7,
+        "x": 440,
+        "y": 640,
+        "wires": [
+            [
+                "37b035b7d7d9c950"
+            ],
+            [
+                "d3fc0fee6bd3e66e"
+            ],
+            [
+                "f82871b9e4c0a8ee"
+            ],
+            [
+                "771ccfdcd857190a"
+            ],
+            [
+                "0f0af93d08d2e039"
+            ],
+            [
+                "c47644f6b7ab1ea3"
+            ],
+            [
+                "50c40f2c705392f3"
+            ]
+        ]
+    },
+    {
+        "id": "37b035b7d7d9c950",
+        "type": "ui-switch",
+        "z": "3a5d1d005de504f2",
+        "group": "8dc29b44656d5aed",
+        "name": "",
+        "label": "Monitoramento",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "decouple": true,
+        "topic": "dage/armadilha/01/cmd/monitoramento",
+        "topicType": "str",
+        "style": "",
+        "className": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "1",
+        "onvalueType": "num",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "0",
+        "offvalueType": "num",
+        "officon": "",
+        "offcolor": "",
+        "x": 700,
+        "y": 520,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "d3fc0fee6bd3e66e",
+        "type": "ui-text-input",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "name": "",
+        "label": "Ar ideal: mínimo (°C)",
+        "order": 2,
+        "width": "4",
+        "height": "1",
+        "topic": "dage/armadilha/01/cmd/ar_min",
+        "topicType": "str",
+        "mode": "number",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": false,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 720,
+        "y": 560,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "f82871b9e4c0a8ee",
+        "type": "ui-text-input",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "name": "",
+        "label": "Ar ideal: máximo (°C)",
+        "order": 3,
+        "width": "4",
+        "height": "1",
+        "topic": "dage/armadilha/01/cmd/ar_max",
+        "topicType": "str",
+        "mode": "number",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": false,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 720,
+        "y": 600,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "771ccfdcd857190a",
+        "type": "ui-text-input",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "name": "",
+        "label": "Umidade alta: acima de (%)",
+        "order": 4,
+        "width": "4",
+        "height": "1",
+        "topic": "dage/armadilha/01/cmd/umid_alta",
+        "topicType": "str",
+        "mode": "number",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": false,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 720,
+        "y": 640,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "0f0af93d08d2e039",
+        "type": "ui-text-input",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "name": "",
+        "label": "Água ideal: mínimo (°C)",
+        "order": 5,
+        "width": "4",
+        "height": "1",
+        "topic": "dage/armadilha/01/cmd/agua_min",
+        "topicType": "str",
+        "mode": "number",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": false,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 720,
+        "y": 680,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "c47644f6b7ab1ea3",
+        "type": "ui-text-input",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "name": "",
+        "label": "Água ideal: máximo (°C)",
+        "order": 6,
+        "width": "4",
+        "height": "1",
+        "topic": "dage/armadilha/01/cmd/agua_max",
+        "topicType": "str",
+        "mode": "number",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": false,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 720,
+        "y": 720,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "50c40f2c705392f3",
+        "type": "ui-text-input",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "name": "",
+        "label": "Água letal: acima de (°C)",
+        "order": 7,
+        "width": "4",
+        "height": "1",
+        "topic": "dage/armadilha/01/cmd/agua_letal",
+        "topicType": "str",
+        "mode": "number",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": false,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 720,
+        "y": 760,
+        "wires": [
+            [
+                "b822fa0ba3049005"
+            ]
+        ]
+    },
+    {
+        "id": "78c07a158cd715c2",
+        "type": "ui-template",
+        "z": "3a5d1d005de504f2",
+        "group": "f2d78b6ea17e9055",
+        "page": "",
+        "ui": "",
+        "name": "Como usar",
+        "order": 1,
+        "width": "12",
+        "height": "1",
+        "head": "",
+        "format": "<template>\n  <p>Digite o novo valor e aperte Enter. Se a placa não aceitar o valor, o campo volta para o valor em uso.</p>\n</template>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 700,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b822fa0ba3049005",
+        "type": "mqtt out",
+        "z": "3a5d1d005de504f2",
+        "name": "Comando para a placa",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "616f02b5f9c4a0e7",
+        "x": 1000,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "33579aa686a5f190",
+        "type": "ui-page",
+        "name": "Armadilha 02 (simulada)",
+        "ui": "aac4c4b1323a81c6",
+        "path": "/armadilha-02",
+        "icon": "thermometer",
+        "layout": "grid",
+        "theme": "5b65a796b3640214",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "19b1d3a5e314807e",
+        "type": "ui-group",
+        "name": "Leituras atuais",
+        "page": "33579aa686a5f190",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "528c29be0bd2d4a6",
+        "type": "ui-group",
+        "name": "Estado",
+        "page": "33579aa686a5f190",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "291e781d8fd9b702",
+        "type": "ui-group",
+        "name": "Histórico recente",
+        "page": "33579aa686a5f190",
+        "width": "12",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "fe767572eb46b7cd",
+        "type": "comment",
+        "z": "e0899595ae582aaa",
+        "name": "Leituras que a armadilha 02 manda a cada 3 s",
+        "info": "",
+        "x": 190,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "e5e9a57d336b1698",
+        "type": "mqtt in",
+        "z": "e0899595ae582aaa",
+        "name": "",
+        "topic": "dage/armadilha/02/+",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "616f02b5f9c4a0e7",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "9350d8dedccb61f1"
+            ]
+        ]
+    },
+    {
+        "id": "9350d8dedccb61f1",
+        "type": "switch",
+        "z": "e0899595ae582aaa",
+        "name": "Separa por tópico",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "dage/armadilha/02/ar",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/02/umidade",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/02/agua",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/02/indice",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/02/nivel",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dage/armadilha/02/status",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 6,
+        "x": 400,
+        "y": 180,
+        "wires": [
+            [
+                "a12509680cdd9690",
+                "a3b42841270bc20a"
+            ],
+            [
+                "3f01e59c9a87cd7b",
+                "a41ede2198490fd1"
+            ],
+            [
+                "9a41ee696bdca1fe",
+                "0bf924d3cf59f92b"
+            ],
+            [
+                "162e9b159752dd71"
+            ],
+            [
+                "76479dfb41d76145"
+            ],
+            [
+                "979eb4b636e971d5"
+            ]
+        ]
+    },
+    {
+        "id": "a12509680cdd9690",
+        "type": "ui-text",
+        "z": "e0899595ae582aaa",
+        "group": "19b1d3a5e314807e",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temperatura do ar (°C)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "3f01e59c9a87cd7b",
+        "type": "ui-text",
+        "z": "e0899595ae582aaa",
+        "group": "19b1d3a5e314807e",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Umidade do ar (%)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9a41ee696bdca1fe",
+        "type": "ui-text",
+        "z": "e0899595ae582aaa",
+        "group": "19b1d3a5e314807e",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temperatura da água (°C)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "162e9b159752dd71",
+        "type": "ui-text",
+        "z": "e0899595ae582aaa",
+        "group": "19b1d3a5e314807e",
+        "order": 4,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Índice de risco (0 a 7)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "76479dfb41d76145",
+        "type": "function",
+        "z": "e0899595ae582aaa",
+        "name": "Texto do nível",
+        "func": "// troca o nivel que a placa manda por um texto e uma cor (iguais aos da tela da placa)\nvar nivel = msg.payload;\n\nif (nivel == \"BAIXO\") { msg.payload = \"Risco baixo\"; msg.cor = \"green\"; }\nif (nivel == \"MEDIO\") { msg.payload = \"Risco médio\"; msg.cor = \"orange\"; }\nif (nivel == \"ALTO\") { msg.payload = \"Risco alto\"; msg.cor = \"red\"; }\nif (nivel == \"LETAL\") { msg.payload = \"Água em temperatura letal\"; msg.cor = \"purple\"; }\nif (nivel == \"ERRO\") { msg.payload = \"Falha no sensor\"; msg.cor = \"blue\"; }\nif (nivel == \"PAUSADO\") { msg.payload = \"Monitoramento pausado\"; msg.cor = \"gray\"; }\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 240,
+        "wires": [
+            [
+                "e078962e2eca03fb"
+            ]
+        ]
+    },
+    {
+        "id": "e078962e2eca03fb",
+        "type": "ui-template",
+        "z": "e0899595ae582aaa",
+        "group": "19b1d3a5e314807e",
+        "page": "",
+        "ui": "",
+        "name": "Nível de risco",
+        "order": 5,
+        "width": "0",
+        "height": "1",
+        "head": "",
+        "format": "<template>\n  <!-- caixa colorida com o nivel de risco -->\n  <div :style=\"{ background: msg?.cor || 'gray', color: 'white', padding: '12px', borderRadius: '6px', textAlign: 'center', fontSize: '22px' }\">\n    {{ msg?.payload || 'Sem dados' }}\n  </div>\n</template>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 900,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "979eb4b636e971d5",
+        "type": "ui-text",
+        "z": "e0899595ae582aaa",
+        "group": "528c29be0bd2d4a6",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Placa",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 690,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "a3b42841270bc20a",
+        "type": "change",
+        "z": "e0899595ae582aaa",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Ar",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 330,
+        "wires": [
+            [
+                "38b3007c8946529c"
+            ]
+        ]
+    },
+    {
+        "id": "0bf924d3cf59f92b",
+        "type": "change",
+        "z": "e0899595ae582aaa",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Água",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 370,
+        "wires": [
+            [
+                "38b3007c8946529c"
+            ]
+        ]
+    },
+    {
+        "id": "38b3007c8946529c",
+        "type": "ui-chart",
+        "z": "e0899595ae582aaa",
+        "group": "291e781d8fd9b702",
+        "name": "Temperaturas",
+        "label": "Temperaturas (°C)",
+        "order": 1,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "false",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": "10",
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "",
+        "colors": [
+            "#d62728",
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5",
+            "#8c564b"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "5",
+        "className": "",
+        "interpolation": "linear",
+        "x": 920,
+        "y": 350,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a41ede2198490fd1",
+        "type": "ui-chart",
+        "z": "e0899595ae582aaa",
+        "group": "291e781d8fd9b702",
+        "name": "Umidade",
+        "label": "Umidade do ar (%)",
+        "order": 2,
+        "chartType": "line",
+        "category": "Umidade",
+        "categoryType": "str",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "0",
+        "ymax": "100",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "false",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": "10",
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5",
+            "#8c564b"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "4",
+        "className": "",
+        "interpolation": "linear",
+        "x": 920,
+        "y": 410,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "947c23d97619fc38",
+        "type": "comment",
+        "z": "e0899595ae582aaa",
+        "name": "Simulador da armadilha 02 (publica nos mesmos topicos que a placa)",
+        "info": "",
+        "x": 270,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "4197604fe047b3dc",
+        "type": "inject",
+        "z": "e0899595ae582aaa",
+        "name": "A cada 3 s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 540,
+        "wires": [
+            [
+                "6dc9cc6aa8d1e2a9"
+            ]
+        ]
+    },
+    {
+        "id": "6dc9cc6aa8d1e2a9",
+        "type": "function",
+        "z": "e0899595ae582aaa",
+        "name": "Simula a armadilha 02",
+        "func": "// simula uma segunda armadilha: as leituras mudam um pouco a cada 3 s\n// e o risco e calculado igual ao firmware, com os limites padrao\nvar ar = context.get(\"ar\") || 28;\nvar umidade = context.get(\"umidade\") || 70;\nvar agua = context.get(\"agua\") || 26;\n\nar = ar + Math.random() - 0.5;\numidade = umidade + (Math.random() - 0.5) * 4;\nagua = agua + (Math.random() - 0.5) * 0.6;\n\n// nao deixa os valores sairem de uma faixa que faz sentido\nif (ar < 20) ar = 20;\nif (ar > 34) ar = 34;\nif (umidade < 50) umidade = 50;\nif (umidade > 95) umidade = 95;\nif (agua < 20) agua = 20;\nif (agua > 32) agua = 32;\n\ncontext.set(\"ar\", ar);\ncontext.set(\"umidade\", umidade);\ncontext.set(\"agua\", agua);\n\n// soma os pontos (maximo 7)\nvar indice = 0;\nif (ar >= 26 && ar <= 30) indice += 2;\nelse if (ar >= 18 && ar <= 34) indice += 1;\n\nif (umidade > 70) indice += 2;\nelse if (umidade > 60) indice += 1;\n\nif (agua >= 22 && agua <= 34) indice += 3;\nelse if (agua >= 15 && agua <= 36) indice += 1;\n\nvar nivel = \"BAIXO\";\nif (indice > 2) nivel = \"MEDIO\";\nif (indice > 5) nivel = \"ALTO\";\n\nvar topico = \"dage/armadilha/02/\";\nreturn [[\n    { topic: topico + \"ar\", payload: ar.toFixed(1) },\n    { topic: topico + \"umidade\", payload: umidade.toFixed(1) },\n    { topic: topico + \"agua\", payload: agua.toFixed(1) },\n    { topic: topico + \"indice\", payload: String(indice) },\n    { topic: topico + \"nivel\", payload: nivel },\n    { topic: topico + \"status\", payload: \"conectada\" }\n]];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 540,
+        "wires": [
+            [
+                "3a4f2704b7e92577"
+            ]
+        ]
+    },
+    {
+        "id": "3a4f2704b7e92577",
+        "type": "mqtt out",
+        "z": "e0899595ae582aaa",
+        "name": "Publica como armadilha 02",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "616f02b5f9c4a0e7",
+        "x": 680,
+        "y": 540,
+        "wires": []
+    }
+]
